@@ -20,13 +20,26 @@ else:
 
 print(df2.head())
 with col1: 
-    st.subheader("table 1")
+    st.subheader("Bar Chart of Highest Degree v. Hours Slept")
     #fig = px.pie(df2, values="highestdegree", template="plotly_dark")
     #fig.update_traces(text='highestdegree', textposition="inside")
     #st.plotly_chart(fig, use_container_width=True)
 
     fig = px.bar(df2, x="highestdegree", y="nightlyhrssleep", template="seaborn")
     st.plotly_chart(fig, use_container_width=True)
+
+with col2:
+    st.subheader("Pie Chart of Highest Degree v. Gender")
+    #fig = px.pie(df2, values="highestdegree", template="plotly_dark")
+    #fig.update_traces(text='highestdegree', textposition="inside")
+    #st.plotly_chart(fig, use_container_width=True)
+
+    df_counts = df2.groupby("highestdegree")["gender"].count().reset_index()
+    fig = px.pie(df_counts, names="highestdegree", values="gender")
+    st.plotly_chart(fig, use_container_width=True)
+
+
+
 
 
 
