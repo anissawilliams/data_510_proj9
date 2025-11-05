@@ -2,6 +2,7 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import plotly.express as px
+import plotly.figure_factory as ff
 
 ### PAGE SETUP  & LOAD DATA ###
 st.set_page_config(layout="wide")
@@ -43,9 +44,12 @@ with col1:
     fig = px.bar(df2, x="highestdegree", y="nightlyhrssleep", template="seaborn", labels={'nightlyhrssleep': 'Hours Slept per Week', 'highestdegree': 'Highest Degree Earned'})
     st.plotly_chart(fig, use_container_width=True)
 
+
+
 with col2:
     st.subheader("Pie Chart of Highest Degree v. Gender")
-    df_counts = df2.groupby("highestdegree")["gender"].count().reset_index()
+    df_counts = df2.groupby("highestdegree",
+                            observed=False)["gender"].count().reset_index()
     fig = px.pie(df_counts, names="highestdegree", values="gender", labels={"gender": "Count", "highestdegree": "Highest Degree Earned"})
     st.plotly_chart(fig, use_container_width=True)
 
@@ -67,7 +71,7 @@ df_long = df_renamed.melt(id_vars='highestdegree',
 
 # ✅ CREATE THE time series CHART
 # Group by year and degree, take the mean
-df_agg = df_long.groupby(['year', 'highestdegree'])['weeksworked'].mean().reset_index()
+df_agg = df_long.groupby(['year', 'highestdegree'], observed=False)['weeksworked'].mean().reset_index()
 
 fig = px.line(df_agg, x='year', y='weeksworked', color='highestdegree',
               markers=True, template="seaborn", labels={'weeksworked': 'Weeks Worked', 'year': 'Year'})
@@ -77,3 +81,51 @@ with st.expander("View Data of TimeSeries:"):
     st.write(df_agg.T.style.background_gradient(cmap="Blues"))
     csv = df_agg.to_csv(index=False).encode("utf-8")
     st.download_button('Download Data', data = csv, file_name = "TimeSeries.csv", mime ='text/csv')
+
+
+# Summary Table
+# Load the dataset
+df_sample = pd.read_csv("nls97b.csv")
+
+# Select relevant columns
+sample = df_sample[[
+    "gender",
+    "maritalstatus",
+    "birthyear",
+    "highestdegree",
+    "wageincome"
+]]
+
+# Sidebar filters
+st.sidebar.header("Filter the sample table data")
+
+# Gender filter
+gender_options = sample["gender"].dropna().unique()
+selected_gender = st.sidebar.multiselect("Gender", gender_options, default=gender_options)
+
+# Marital status filter
+marital_options = sample["maritalstatus"].dropna().unique()
+selected_marital = st.sidebar.multiselect("Marital Status", marital_options, default=marital_options)
+
+# Birth year range filter
+min_year, max_year = int(sample["birthyear"].min()), int(sample["birthyear"].max())
+birthyear_range = st.sidebar.slider("Birth Year Range", min_year, max_year, (min_year, max_year))
+
+# Apply filters
+filtered_sample = sample[
+    (sample["gender"].isin(selected_gender)) &
+    (sample["maritalstatus"].isin(selected_marital)) &
+    (sample["birthyear"].between(birthyear_range[0], birthyear_range[1]))
+]
+
+# Convert to string for Plotly table
+table_data = filtered_sample.head(20).astype(str)
+
+# Display table
+st.subheader("Filtered Sample Table")
+fig = ff.create_table(table_data, colorscale="Cividis")
+st.plotly_chart(fig, use_container_width=True)
+
+# Optional: show full filtered DataFrame below
+with st.expander("Show full filtered data"):
+    st.dataframe(filtered_sample)
