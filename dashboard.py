@@ -1,5 +1,6 @@
 import streamlit as st
 import plotly.express as px
+
 import pandas as pd
 import os
 import warnings
@@ -140,6 +141,7 @@ with chart2:
 import plotly.figure_factory as ff
 st.subheader(":point_right: Month wise Sub-Category Sales Summary")
 with st.expander("Summary_Table"):
+
     df_sample = df[0:5][["Region","State","City","Category","Sales","Profit","Quantity"]]
     fig = ff.create_table(df_sample, colorscale = "Cividis")
     st.plotly_chart(fig, use_container_width=True)
