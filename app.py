@@ -50,7 +50,7 @@ with col2:
     st.plotly_chart(fig, use_container_width=True)
 
 # Time series in full width below
-st.subheader("Time Series of Weeks Worked by Highest Degree")
+st.subheader("Time Series of Weeks Worked Per Year by Highest Degree")
 
 # Create a list of the weeks worked columns
 weeks_cols = [f'weeksworked{str(i).zfill(2)}' for i in range(0, 14)]
