@@ -40,13 +40,13 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.subheader("Bar Chart of Highest Degree v. Hours Slept")
-    fig = px.bar(df2, x="highestdegree", y="nightlyhrssleep", template="seaborn")
+    fig = px.bar(df2, x="highestdegree", y="nightlyhrssleep", template="seaborn", labels={'nightlyhrssleep': 'Hours Slept per Week', 'highestdegree': 'Highest Degree Earned'})
     st.plotly_chart(fig, use_container_width=True)
 
 with col2:
     st.subheader("Pie Chart of Highest Degree v. Gender")
     df_counts = df2.groupby("highestdegree")["gender"].count().reset_index()
-    fig = px.pie(df_counts, names="highestdegree", values="gender")
+    fig = px.pie(df_counts, names="highestdegree", values="gender", labels={"gender": "Count", "highestdegree": "Highest Degree Earned"})
     st.plotly_chart(fig, use_container_width=True)
 
 # Time series in full width below
@@ -70,5 +70,10 @@ df_long = df_renamed.melt(id_vars='highestdegree',
 df_agg = df_long.groupby(['year', 'highestdegree'])['weeksworked'].mean().reset_index()
 
 fig = px.line(df_agg, x='year', y='weeksworked', color='highestdegree',
-              markers=True, template="seaborn")
+              markers=True, template="seaborn", labels={'weeksworked': 'Weeks Worked', 'year': 'Year'})
 st.plotly_chart(fig, use_container_width=True)
+
+with st.expander("View Data of TimeSeries:"):
+    st.write(df_agg.T.style.background_gradient(cmap="Blues"))
+    csv = df_agg.to_csv(index=False).encode("utf-8")
+    st.download_button('Download Data', data = csv, file_name = "TimeSeries.csv", mime ='text/csv')
