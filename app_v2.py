@@ -151,7 +151,8 @@ with col1:
             fig_bar = px.bar(
                 bar_data,
                 x=group_col,
-                y=f"mean_{bar_metric}"
+                y=f"mean_{bar_metric}",
+                labels={group_col: 'Highest Degree Earned', f'mean_{bar_metric}': 'Frequency'},
             )
             st.plotly_chart(fig_bar, use_container_width=True)
 
@@ -233,6 +234,7 @@ else:
             x="year",
             y="weeksworked",
             color=color_col,
+            labels={"year": "Year", "weeksworked": "# of Weeks Worked"},
             markers=True
         )
         st.plotly_chart(fig_line, use_container_width=True)
