@@ -234,7 +234,7 @@ else:
             x="year",
             y="weeksworked",
             color=color_col,
-            labels={"year": "Year", "weeksworked": "# of Weeks Worked"},
+            labels={"year": "Year", "weeksworked": "Number of Weeks Worked"},
             markers=True
         )
         st.plotly_chart(fig_line, use_container_width=True)
