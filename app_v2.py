@@ -239,7 +239,8 @@ else:
         )
         st.plotly_chart(fig_line, use_container_width=True)
 
-        st.write("Time series data")
+with st.expander("View Data of TimeSeries:"):
+        st.write("Time Series Data")
         st.dataframe(ts_grouped, use_container_width=True)
         st.download_button(
             label="Download time series data (CSV)",
